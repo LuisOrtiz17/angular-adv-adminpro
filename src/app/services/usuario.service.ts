@@ -54,14 +54,16 @@ export class UsuarioService {
     // TODO: Borrar Menu
     localStorage.removeItem('menu');
     
+    if( this.usuario.google ){
 
-    google.accounts.id.revoke('zamudioluisortiz@gmail.com', () => {
-
-      this.ngZone.run(() => {
-        this.router.navigateByUrl('/login');
+      google.accounts.id.revoke(`${this.usuario.email}`, () => {
+  
+        this.ngZone.run(() => {
+          this.router.navigateByUrl('/login');
+        })
+  
       })
-
-    })
+    }
   }
 
   validarToken(): Observable<boolean>{

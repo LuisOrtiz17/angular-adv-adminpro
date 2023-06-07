@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { UsuarioService } from 'src/app/services/usuario.service';
 
 @Component({
@@ -13,7 +14,7 @@ export class HeaderComponent implements OnInit {
   public name = '';
   public email = '';
 
-  constructor(private usuarioService: UsuarioService) {
+  constructor(private usuarioService: UsuarioService, private router: Router) {
     this.imgUrl = usuarioService.usuario.imagenUrl;
     this.name = usuarioService.usuario.nombre;
     this.email = usuarioService.usuario.email;
@@ -24,6 +25,14 @@ export class HeaderComponent implements OnInit {
 
   logout(){
     this.usuarioService.logout();
+  }
+
+  buscar( termino: string){
+
+    if( termino.length === 0 ){
+     return this.router.navigateByUrl(`/dashboard`);
+    }
+    return this.router.navigateByUrl(`/dashboard/buscar/${ termino }`);
   }
 
 }

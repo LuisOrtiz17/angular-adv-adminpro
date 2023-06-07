@@ -27,6 +27,10 @@ export class UsuarioService {
     return localStorage.getItem('token') || '';
   }
 
+  get role(): 'ADMIN_ROLE' | 'USER_ROLE'{
+    return this.usuario.role!;
+  }
+
   get uid(): string{
     return this.usuario.uid || '';
   }
@@ -39,9 +43,16 @@ export class UsuarioService {
     }
   }
 
+  guardarLocalStorage( token: string, menu: any){
+    localStorage.setItem('token', token);
+        localStorage.setItem('menu', JSON.stringify(menu) );
+  }
+
 
   logout(){
     localStorage.removeItem('token');
+    // TODO: Borrar Menu
+    localStorage.removeItem('menu');
     
 
     google.accounts.id.revoke('zamudioluisortiz@gmail.com', () => {
@@ -65,7 +76,7 @@ export class UsuarioService {
       map( (resp: any) => {
         const { email, google, nombre, role, img='', uid} = resp.usuario;
         this.usuario = new Usuario(nombre, email, '', img, google, role, uid);
-        localStorage.setItem('token', resp.token);
+        this.guardarLocalStorage(resp.token, resp.menu);
         return true;
       }),
       catchError( error => of(false))
@@ -76,7 +87,7 @@ export class UsuarioService {
     return this.http.post(`${base_url}/usuarios`, formData).pipe(
       tap((resp: any) => {
         
-        localStorage.setItem('token', resp.token);
+        this.guardarLocalStorage(resp.token, resp.menu);
       })
     );
     //console.log('Creando usuario');
@@ -96,7 +107,7 @@ export class UsuarioService {
   login(formData: any) {
     return this.http.post(`${base_url}/login`, formData).pipe(
       tap((resp: any) => {
-        localStorage.setItem('token', resp.token);
+        this.guardarLocalStorage(resp.token, resp.menu);
       })
     );
     //console.log('Creando usuario');
@@ -107,7 +118,7 @@ export class UsuarioService {
     .pipe(
       tap( (resp: any ) => {
         console.log(resp)
-        localStorage.setItem('token', resp.token)
+        this.guardarLocalStorage(resp.token, resp.menu);
         
       })
     )
